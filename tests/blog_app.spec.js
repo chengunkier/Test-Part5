@@ -72,5 +72,32 @@ describe('Blog app', () => {
       // new blog should appear in the list
       await expect(page.getByText('Test Blog Title Test Author')).toBeVisible()
     })
+
+    test('a blog can be liked', async ({ page }) => {
+      // first create a blog to like
+      await page.getByRole('button', { name: 'create new blog' }).click()
+
+      const inputs = page.getByRole('textbox')
+      await inputs.nth(0).fill('Blog to be liked')
+      await inputs.nth(1).fill('Like Author')
+      await inputs.nth(2).fill('https://likedblog.com')
+
+      await page.getByRole('button', { name: 'create' }).click()
+
+      // wait for blog to appear in list
+      await expect(page.getByText('Blog to be liked Like Author')).toBeVisible()
+
+      // click view button to expand the blog
+      await page.getByRole('button', { name: 'view' }).click()
+
+      // confirm likes starts at 0
+      await expect(page.getByText('likes 0')).toBeVisible()
+
+      // click the like button
+      await page.getByRole('button', { name: 'like' }).click()
+
+      // likes should now be 1
+      await expect(page.getByText('likes 1')).toBeVisible()
+    })
   })
 })
